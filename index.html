@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow – Productivity Analyzer</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366F1',
+            secondary: '#818CF8',
+            success: '#22C55E',
+            warning: '#F59E0B',
+            danger: '#EF4444',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#F8FAFC] dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-40 flex flex-col transition-transform duration-300 sidebar-transition">
+    <!-- Logo -->
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-gray-100 dark:border-gray-700">
+      <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+        </svg>
+      </div>
+      <span class="text-lg font-bold text-gray-800 dark:text-white">TaskFlow</span>
+    </div>
+
+    <!-- User Info -->
+    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+      <p class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Logged in as</p>
+      <p id="sidebar-username" class="font-semibold text-gray-700 dark:text-gray-200 truncate">User</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+      <button onclick="navigate('dashboard')" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all" data-page="dashboard">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/></svg>
+        Dashboard
+      </button>
+      <button onclick="navigate('mytasks')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all" data-page="mytasks">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7l2 2 4-4"/></svg>
+        My Tasks
+      </button>
+      <button onclick="navigate('calendar')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all" data-page="calendar">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Calendar
+      </button>
+      <button onclick="navigate('analytics')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all" data-page="analytics">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Analytics
+      </button>
+      <button onclick="navigate('settings')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all" data-page="settings">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Settings
+      </button>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700">
+      <p class="text-xs text-gray-400 dark:text-gray-500">TaskFlow v1.0</p>
+    </div>
+  </aside>
+
+  <!-- Mobile overlay -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/40 z-30 hidden" onclick="toggleSidebar()"></div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="ml-64 min-h-screen flex flex-col main-content transition-all duration-300" id="main-content">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-20 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-4">
+        <!-- Hamburger (mobile) -->
+        <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div>
+          <h1 id="page-title" class="text-xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
+          <p id="header-date" class="text-sm text-gray-400 dark:text-gray-500"></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Dark mode toggle -->
+        <button onclick="toggleDarkMode()" id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition" title="Toggle Dark Mode">
+          <svg id="theme-icon-light" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <svg id="theme-icon-dark" class="w-5 h-5 text-gray-500 dark:text-gray-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+          <span id="header-avatar" class="text-white text-xs font-bold">U</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 p-6">
+
+      <!-- ===== PAGE: DASHBOARD ===== -->
+      <section id="page-dashboard" class="page-section">
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          <div class="kpi-card bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Tasks</span>
+              <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              </div>
+            </div>
+            <p id="kpi-total" class="text-3xl font-bold text-gray-800 dark:text-white">0</p>
+          </div>
+          <div class="kpi-card bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Completed</span>
+              <div class="w-9 h-9 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center">
+                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+            </div>
+            <p id="kpi-completed" class="text-3xl font-bold text-green-500">0</p>
+          </div>
+          <div class="kpi-card bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Pending</span>
+              <div class="w-9 h-9 rounded-xl bg-yellow-50 dark:bg-yellow-900/30 flex items-center justify-center">
+                <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+            </div>
+            <p id="kpi-pending" class="text-3xl font-bold text-yellow-500">0</p>
+          </div>
+          <div class="kpi-card bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Completion Rate</span>
+              <div class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center">
+                <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              </div>
+            </div>
+            <p id="kpi-rate" class="text-3xl font-bold text-purple-500">0%</p>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-8">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200">Overall Progress</h3>
+            <span id="progress-text" class="text-sm font-semibold text-primary">0%</span>
+          </div>
+          <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-3">
+            <div id="progress-bar" class="bg-primary h-3 rounded-full transition-all duration-500" style="width:0%"></div>
+          </div>
+          <p class="text-xs text-gray-400 dark:text-gray-500 mt-2"><span id="progress-done">0</span> of <span id="progress-total">0</span> tasks completed</p>
+        </div>
+
+        <!-- Recent Tasks -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200">Recent Tasks</h3>
+            <button onclick="navigate('mytasks')" class="text-sm text-primary hover:text-secondary font-medium transition">View All →</button>
+          </div>
+          <div id="dashboard-task-list" class="divide-y divide-gray-50 dark:divide-gray-700"></div>
+        </div>
+      </section>
+
+      <!-- ===== PAGE: MY TASKS ===== -->
+      <section id="page-mytasks" class="page-section hidden">
+        <!-- Toolbar -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div class="relative w-full sm:w-72">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input id="search-input" type="text" placeholder="Search tasks..." oninput="applyFilters()" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition" />
+          </div>
+          <button onclick="openModal()" class="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:bg-secondary transition shadow-sm whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add New Task
+          </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-3 mb-6">
+          <select id="filter-status" onchange="applyFilters()" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+          </select>
+          <select id="filter-priority" onchange="applyFilters()" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
+            <option value="all">All Priority</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+          <select id="filter-category" onchange="applyFilters()" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
+            <option value="all">All Categories</option>
+            <option value="Academic">Academic</option>
+            <option value="Personal">Personal</option>
+            <option value="Work">Work</option>
+          </select>
+        </div>
+
+        <!-- Task List -->
+        <div id="task-list" class="space-y-3"></div>
+        <div id="empty-state" class="hidden text-center py-16">
+          <div class="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-gray-300 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <p class="text-gray-400 dark:text-gray-500 font-medium">No tasks found</p>
+          <p class="text-gray-300 dark:text-gray-600 text-sm mt-1">Add a new task or adjust your filters.</p>
+        </div>
+      </section>
+
+      <!-- ===== PAGE: CALENDAR ===== -->
+      <section id="page-calendar" class="page-section hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6">
+          <!-- Calendar Header -->
+          <div class="flex items-center justify-between mb-6">
+            <button onclick="prevMonth()" class="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <h2 id="calendar-month-title" class="text-lg font-bold text-gray-800 dark:text-white"></h2>
+            <button onclick="nextMonth()" class="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <!-- Day headers -->
+          <div class="grid grid-cols-7 mb-2">
+            <div class="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 py-2">Sun</div>
+            <div class="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 py-2">Mon</div>
+            <div class="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 py-2">Tue</div>
+            <div class="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 py-2">Wed</div>
+            <div class="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 py-2">Thu</div>
+            <div class="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 py-2">Fri</div>
+            <div class="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 py-2">Sat</div>
+          </div>
+          <!-- Calendar grid -->
+          <div id="calendar-grid" class="grid grid-cols-7 gap-1"></div>
+        </div>
+        <!-- Selected day tasks -->
+        <div id="calendar-day-detail" class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+          <h3 id="calendar-detail-title" class="font-semibold text-gray-700 dark:text-gray-200 mb-4">Select a date to view tasks</h3>
+          <div id="calendar-detail-list" class="space-y-2"></div>
+        </div>
+      </section>
+
+      <!-- ===== PAGE: ANALYTICS ===== -->
+      <section id="page-analytics" class="page-section hidden">
+        <!-- Analytics KPI -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Completed Tasks</p>
+            <p id="a-completed" class="text-4xl font-bold text-green-500">0</p>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Pending Tasks</p>
+            <p id="a-pending" class="text-4xl font-bold text-yellow-500">0</p>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 text-center">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Completion Rate</p>
+            <p id="a-rate" class="text-4xl font-bold text-primary">0%</p>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">Tasks by Category</h3>
+            <div class="relative h-64"><canvas id="chart-category"></canvas></div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">Completed vs Pending</h3>
+            <div class="relative h-64"><canvas id="chart-status"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Priority chart -->
+        <div class="mt-6 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">Tasks by Priority</h3>
+          <div class="relative h-56"><canvas id="chart-priority"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ===== PAGE: SETTINGS ===== -->
+      <section id="page-settings" class="page-section hidden">
+        <div class="max-w-2xl space-y-6">
+          <!-- Profile settings -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">Profile</h3>
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center">
+                <span id="settings-avatar" class="text-white text-2xl font-bold">U</span>
+              </div>
+              <div>
+                <p id="settings-name-display" class="font-semibold text-gray-800 dark:text-white text-lg">User</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500">TaskFlow Member</p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Username</label>
+                <input id="settings-username-input" type="text" placeholder="Enter your name" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition" />
+              </div>
+              <button onclick="saveUsername()" class="px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:bg-secondary transition">Save Changes</button>
+            </div>
+          </div>
+
+          <!-- Theme settings -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">Appearance</h3>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-gray-700 dark:text-gray-200">Dark Mode</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500">Switch between light and dark theme</p>
+              </div>
+              <button onclick="toggleDarkMode()" id="dark-mode-btn" class="toggle-btn w-12 h-6 rounded-full relative transition-colors duration-300 bg-gray-200 dark:bg-primary">
+                <span class="toggle-knob absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-300"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- App Info -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-4">About Application</h3>
+            <div class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+              <div class="flex justify-between"><span>Application</span><span class="font-medium text-gray-700 dark:text-gray-200">TaskFlow</span></div>
+              <div class="flex justify-between"><span>Version</span><span class="font-medium text-gray-700 dark:text-gray-200">1.0.0</span></div>
+              <div class="flex justify-between"><span>Technology</span><span class="font-medium text-gray-700 dark:text-gray-200">HTML · Tailwind CSS · JS</span></div>
+              <div class="flex justify-between"><span>Storage</span><span class="font-medium text-gray-700 dark:text-gray-200">LocalStorage</span></div>
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-red-100 dark:border-red-900/30">
+            <h3 class="font-semibold text-danger mb-2">Danger Zone</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Permanently clear all tasks from storage. This action cannot be undone.</p>
+            <button onclick="clearAllTasks()" class="px-5 py-2.5 bg-danger text-white rounded-xl text-sm font-medium hover:bg-red-600 transition">Clear All Tasks</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /main-content -->
+
+  <!-- ===== MODAL: ADD / EDIT TASK ===== -->
+  <div id="task-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg transform transition-all duration-300 scale-95 opacity-0" id="modal-box">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-700">
+        <h2 id="modal-title" class="text-lg font-bold text-gray-800 dark:text-white">Add New Task</h2>
+        <button onclick="closeModal()" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+          <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form id="task-form" onsubmit="submitTask(event)" class="px-6 py-5 space-y-4">
+        <input type="hidden" id="edit-task-id" value="" />
+        <div>
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Task Title <span class="text-danger">*</span></label>
+          <input id="form-title" type="text" placeholder="Enter task title" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition" />
+          <p id="err-title" class="text-xs text-danger mt-1 hidden">Title is required.</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Description</label>
+          <textarea id="form-description" rows="3" placeholder="Brief description..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition resize-none"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Category</label>
+            <select id="form-category" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
+              <option value="Academic">Academic</option>
+              <option value="Personal">Personal</option>
+              <option value="Work">Work</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Priority</label>
+            <select id="form-priority" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition">
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Deadline <span class="text-danger">*</span></label>
+          <input id="form-deadline" type="date" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition" />
+          <p id="err-deadline" class="text-xs text-danger mt-1 hidden">Deadline is required.</p>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="closeModal()" class="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition">Cancel</button>
+          <button type="submit" class="flex-1 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-secondary transition">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== TOAST NOTIFICATION ===== -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+    <div class="flex items-center gap-3 bg-gray-800 dark:bg-gray-700 text-white px-5 py-3.5 rounded-xl shadow-lg">
+      <svg id="toast-icon" class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+      <span id="toast-message" class="text-sm font-medium"></span>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+</body>
+</html>

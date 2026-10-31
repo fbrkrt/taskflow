@@ -1,0 +1,112 @@
+[
+    {
+        "id": "task_6ae559a3266954.89307051",
+        "title": "web bencana",
+        "description": "",
+        "category": "academic",
+        "priority": "high",
+        "deadline": "2026-11-30",
+        "completed": false,
+        "createdAt": "2026-10-31T03:59:47+01:00"
+    },
+    {
+        "id": "seed001",
+        "title": "Kerjakan Laporan Praktikum Web",
+        "description": "Selesaikan laporan praktikum pemrograman web bab 3 dan 4 sebelum deadline.",
+        "category": "academic",
+        "priority": "high",
+        "deadline": "2026-11-05",
+        "completed": false,
+        "createdAt": "2026-10-28T08:00:00.000Z"
+    },
+    {
+        "id": "seed002",
+        "title": "Belajar Tailwind CSS",
+        "description": "Pelajari dokumentasi resmi Tailwind CSS dan buat komponen sederhana.",
+        "category": "academic",
+        "priority": "medium",
+        "deadline": "2026-11-10",
+        "completed": true,
+        "createdAt": "2026-10-27T10:00:00.000Z"
+    },
+    {
+        "id": "seed003",
+        "title": "Olahraga Pagi",
+        "description": "Jogging 30 menit setiap pagi sebelum jam 7.",
+        "category": "personal",
+        "priority": "low",
+        "deadline": "2026-11-01",
+        "completed": true,
+        "createdAt": "2026-10-26T06:00:00.000Z"
+    },
+    {
+        "id": "seed004",
+        "title": "Review Pull Request Teman",
+        "description": "Review dan beri komentar pada PR #24 di repositori tim proyek akhir.",
+        "category": "work",
+        "priority": "high",
+        "deadline": "2026-11-02",
+        "completed": false,
+        "createdAt": "2026-10-29T09:30:00.000Z"
+    },
+    {
+        "id": "seed005",
+        "title": "Buat Presentasi UTS",
+        "description": "Siapkan slide PowerPoint untuk presentasi UTS mata kuliah Analisis Sistem.",
+        "category": "academic",
+        "priority": "high",
+        "deadline": "2026-11-07",
+        "completed": false,
+        "createdAt": "2026-10-29T11:00:00.000Z"
+    },
+    {
+        "id": "seed006",
+        "title": "Bayar Tagihan Kost",
+        "description": "Transfer biaya kost bulan November sebelum tanggal 5.",
+        "category": "personal",
+        "priority": "medium",
+        "deadline": "2026-11-05",
+        "completed": false,
+        "createdAt": "2026-10-30T07:00:00.000Z"
+    },
+    {
+        "id": "seed007",
+        "title": "Meeting Tim Proyek",
+        "description": "Diskusi progress sprint kedua dengan anggota tim via Google Meet.",
+        "category": "work",
+        "priority": "medium",
+        "deadline": "2026-11-03",
+        "completed": true,
+        "createdAt": "2026-10-28T14:00:00.000Z"
+    },
+    {
+        "id": "seed008",
+        "title": "Baca Buku Clean Code",
+        "description": "Baca minimal 2 bab per hari dari buku Clean Code by Robert C. Martin.",
+        "category": "personal",
+        "priority": "low",
+        "deadline": "2026-11-15",
+        "completed": false,
+        "createdAt": "2026-10-25T20:00:00.000Z"
+    },
+    {
+        "id": "seed009",
+        "title": "Submit Tugas Algoritma",
+        "description": "Upload file jawaban tugas besar algoritma ke e-learning kampus.",
+        "category": "academic",
+        "priority": "high",
+        "deadline": "2026-10-30",
+        "completed": true,
+        "createdAt": "2026-10-20T08:00:00.000Z"
+    },
+    {
+        "id": "seed010",
+        "title": "Update Portfolio Website",
+        "description": "Tambahkan proyek terbaru ke halaman portfolio dan deploy ulang ke GitHub Pages.",
+        "category": "work",
+        "priority": "low",
+        "deadline": "2026-11-20",
+        "completed": false,
+        "createdAt": "2026-10-30T16:00:00.000Z"
+    }
+]

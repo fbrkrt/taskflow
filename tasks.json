@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "title": "Complete Assignment Report",
+    "description": "Write the final report for the database systems assignment.",
+    "category": "Academic",
+    "priority": "High",
+    "deadline": "2026-11-05",
+    "completed": false
+  },
+  {
+    "id": 2,
+    "title": "Morning Exercise Routine",
+    "description": "30 minutes jogging and 15 minutes stretching.",
+    "category": "Personal",
+    "priority": "Medium",
+    "deadline": "2026-11-01",
+    "completed": true
+  },
+  {
+    "id": 3,
+    "title": "Team Sprint Planning Meeting",
+    "description": "Attend the weekly sprint planning with the dev team.",
+    "category": "Work",
+    "priority": "High",
+    "deadline": "2026-11-02",
+    "completed": false
+  },
+  {
+    "id": 4,
+    "title": "Study for Algorithms Exam",
+    "description": "Review sorting algorithms, graphs, and dynamic programming.",
+    "category": "Academic",
+    "priority": "High",
+    "deadline": "2026-11-10",
+    "completed": false
+  },
+  {
+    "id": 5,
+    "title": "Grocery Shopping",
+    "description": "Buy vegetables, fruits, and household supplies.",
+    "category": "Personal",
+    "priority": "Low",
+    "deadline": "2026-11-01",
+    "completed": true
+  },
+  {
+    "id": 6,
+    "title": "Update Portfolio Website",
+    "description": "Add recent projects and update skills section.",
+    "category": "Work",
+    "priority": "Medium",
+    "deadline": "2026-11-15",
+    "completed": false
+  },
+  {
+    "id": 7,
+    "title": "Read Web Development Book",
+    "description": "Read chapters 5-8 of the JavaScript book.",
+    "category": "Academic",
+    "priority": "Low",
+    "deadline": "2026-11-20",
+    "completed": false
+  },
+  {
+    "id": 8,
+    "title": "Submit Project Proposal",
+    "description": "Finalize and submit the capstone project proposal.",
+    "category": "Academic",
+    "priority": "High",
+    "deadline": "2026-11-03",
+    "completed": true
+  }
+]
